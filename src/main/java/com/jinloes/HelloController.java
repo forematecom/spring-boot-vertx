@@ -30,7 +30,7 @@ public class HelloController {
      * Gets the hello message in a background thread. Returning a default value if it takes
      * longer than 1ms to run.
      *
-     * @param waitSecs number of seconds to wait, for testing 
+     * @param waitSecs number of seconds to wait, for testing
      * @return hello message
      */
     @RequestMapping(value = "/hello", method = RequestMethod.GET,
