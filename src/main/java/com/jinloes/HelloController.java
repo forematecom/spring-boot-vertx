@@ -26,13 +26,20 @@ public class HelloController {
         this.eventBus = eventBus;
     }
 
+    /**
+     * Gets the hello message in a background thread. Returning a default value if it takes
+     * longer than 1ms to run.
+     *
+     * @param waitSecs number of seconds to wait, for testing 
+     * @return hello message
+     */
     @RequestMapping(value = "/hello", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public DeferredResult<ResponseEntity<String>> getGreeting(
             @RequestParam(defaultValue = "0") int waitSecs) {
         DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(1L,
                 new ResponseEntity<>("foo", HttpStatus.OK));
-        eventBus.send("get_greeting", "Get the greeting", asyncResult -> {
+        eventBus.send("helloService", "Get the greeting", asyncResult -> {
             String body = Objects.toString(asyncResult.result().body());
             try {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(waitSecs));

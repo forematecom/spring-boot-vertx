@@ -2,6 +2,7 @@ package com.jinloes;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.EventBus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,23 +12,23 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 public class Application {
+    @Autowired
+    private HelloVerticle helloVerticle;
 
     public static void main(String args[]) {
         SpringApplication.run(Application.class, args);
     }
 
     @Bean
-    public Vertx vertx(){
-        return Vertx.vertx();
+    public Vertx vertx() {
+        Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle(helloVerticle);
+        return vertx;
     }
 
     @Bean
     public EventBus eventBus() {
         EventBus eventBus = vertx().eventBus();
-        eventBus.consumer("get_greeting", message -> {
-            System.out.println("I have received a message: " + message.body());
-            message.reply("baz");
-        });
         return eventBus;
     }
 }
