@@ -30,5 +30,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'io.vertx:vertx-core:3.0.0'
+    compile 'io.vertx:vertx-hazelcast:3.0.0'
     testCompile 'junit:junit:4.11'
 }

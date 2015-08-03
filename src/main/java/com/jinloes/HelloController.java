@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -35,18 +37,24 @@ public class HelloController {
      */
     @RequestMapping(value = "/hello", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DeferredResult<ResponseEntity<String>> getGreeting(
+    public DeferredResult<ResponseEntity<Map<String, String>>> getGreeting(
             @RequestParam(defaultValue = "0") int waitSecs) {
-        DeferredResult<ResponseEntity<String>> deferredResult = new DeferredResult<>(1L,
-                new ResponseEntity<>("foo", HttpStatus.OK));
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "foo");
+        DeferredResult<ResponseEntity<Map<String, String>>> deferredResult = new DeferredResult<>(
+                1L, new ResponseEntity<>(response, HttpStatus.OK));
         eventBus.send("helloService", "Get the greeting", asyncResult -> {
-            String body = Objects.toString(asyncResult.result().body());
+            Map<String, String> body = new HashMap<>();
+            body.put("message", Objects.toString(asyncResult.result().body()));
             try {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(waitSecs));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             deferredResult.setResult(new ResponseEntity<>(body, HttpStatus.OK));
+        });
+        eventBus.send("getTodo", "abc123", event -> {
+            System.out.println(event.result().body());
         });
         return deferredResult;
     }
